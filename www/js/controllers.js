@@ -43,21 +43,59 @@ angular.module('stockApp.controllers', [])
 
 .controller('MyStocksCtrl', ['$scope',
   function($scope) {
+
     $scope.myStocksArray = [
       {ticker: "AAPL"},
-      {ticker: "GPRL"},
+      {ticker: "GPRO"},
       {ticker: "FB"},
       {ticker: "NFLX"},
       {ticker: "TSLA"},
       {ticker: "BRK-A"},
+      {ticker: "INTC"},
+      {ticker: "MSFT"},
       {ticker: "GE"},
       {ticker: "BAC"},
       {ticker: "C"},
-      {ticker: "T"},
-      {ticker: "AAPL"}
+      {ticker: "T"}
     ];
 
-})
+}])
 
-.controller('StockCtrl', function($scope, $stateParams) {
-});
+
+
+.controller('StockCtrl', ['$scope', '$stateParams', 'stockDataService', 'dateService',
+  function($scope, $stateParams, stockDataService, dateService) {
+
+    $scope.ticker = $stateParams.stockTicker;
+    $scope.chartView = 1;
+
+    $scope.$on("$ionicView.afterEnter", function() {
+      getPriceData();
+      getDetailsData();
+    });
+
+    $scope.chartViewFunc = function(n) {
+      $scope.chartView = n;
+    };
+
+    function getPriceData() {
+
+      var promise = stockDataService.getPriceData($scope.ticker);
+
+      promise.then(function(data) {
+        $scope.stockPriceData = data;
+      });
+    }
+
+    function getDetailsData() {
+
+      var promise = stockDataService.getDetailsData($scope.ticker);
+
+      promise.then(function(data) {
+        $scope.stockDetailsData = data;
+      });
+    }
+
+}])
+
+;
